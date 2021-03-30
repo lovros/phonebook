@@ -9,61 +9,62 @@ module.exports = function makeContactRepo ({ database }) {
     update
   })
 
-  async function getItems () {
+  async function getItems ({currentUser}) {
     const db = await database
-    const query = {}
 
     return (await db
       .collection('contacts')
-      .find(query)
+      .find({ userId: db.makeId(currentUser._id) })
       .toArray())
   }
 
-  async function add ({ contactId, ...contact }) {    
+  async function add ({ currentUser, ...contact }) {    
     const db = await database
-    if (contactId) {
-      contact._id = db.makeId(contactId)
-    }
-    const { result, ops } = await db
+    
+    const result = await db
       .collection('contacts')
-      .insertOne(contact)
-    return {
-      success: result.ok === 1,
-      created: documentToContact(ops[0])
-    }
+      .insertOne({userId: db.makeId(currentUser._id), ...contact})
+    return result.ops[0]
   }
 
-  async function findById ({ contactId }) {
+  async function findById ({ currentUser, contactId }) {
     const db = await database
     const found = await db
       .collection('contacts')
-      .findOne({ _id: db.makeId(contactId) })
-    if (found) {
+      .findOne({ userId: db.makeId(currentUser._id), _id: db.makeId(contactId) })
+    if (found)
       return found
-    }
-    return null
+    else
+      return null
   }
 
 
-  async function remove ({ contactId }) {
+  async function remove ({ currentUser, contactId }) {
     const db = await database
     if (contactId) {
-      const { result, error } = await db.collection('contacts').deleteOne({_id: db.makeId(contactId)});
-      return {deleted: result.n}
+      const { result } = await db.collection('contacts').deleteOne({ userId: db.makeId(currentUser._id), _id: db.makeId(contactId) })
+      if(result.n > 0)
+        return {deleted: result.n}
+      else return {error: result}
     }
-    return {success: false, missingParam: "contactId"}
+    return {error: "Missing parameter: contactId"}
   }
 
-  async function update ({ contactId, ...contact }) {
+  async function update ({ currentUser, contactId, ...contact }) {
     const db = await database
     if (contactId) {
       const result = await db.collection('contacts').findOneAndReplace(
-        {_id: db.makeId(contactId)},
-        { ...contact }
-     )
-      return {success: result.lastErrorObject.updatedExisting}
+        { userId: db.makeId(currentUser._id), _id: db.makeId(contactId) },
+        { userId: db.makeId(currentUser._id), ...contact }
+      )
+      if(result.lastErrorObject.updatedExisting)
+        return {updated: result.lastErrorObject.updatedExisting}
+      else
+        return {error: "Did not update"}
+
+      
     }
-    return {success: false, missingParam: "contactId"}
+    return {error: "Missing parameter: contactId"}
   }
 
   function documentToContact ({ _id: contactId, ...doc }) {

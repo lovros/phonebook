@@ -19,7 +19,7 @@ module.exports = function makeContact (contactInfo = requiredParam('contactInfo'
 
   function validateName (label, name) {
     if (name.length < 2) {
-      throw new InvalidPropertyError(
+      throw new Error(
         `A contact's ${label} name must be at least 2 characters long.`
       )
     }
