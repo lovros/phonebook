@@ -3,7 +3,6 @@ mongodb = require('mongodb')
 const DB_PORT = process.env.DB_PORT || 27017
 
 module.exports = async function makeDb () {
-  // todo: check if db is already running
   const MongoClient = mongodb.MongoClient
   const url = `mongodb://localhost:${DB_PORT}` 
   const dbName = 'phonebook'
