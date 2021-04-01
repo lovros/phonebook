@@ -12,11 +12,7 @@ export default {
   name: 'App',
   components: {
     TheNavbar
-  },
-  created () {	  
-					localStorage.setItem("asd", "qwe")
-
-  },
+  }
 }
 </script>
 
