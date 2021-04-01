@@ -9,7 +9,7 @@
 						class="img-fluid rounded-circle" alt="avatar">
 					<img v-else width = "50" height= "50" src="@/assets/default-photo.png"
 						class="img-fluid rounded-circle" alt="avatar">
-					<span class="mx-5">{{ contact.firstName }} {{ contact.lastName }}</span>
+					<span class="mx-lg-5 mx-2">{{ contact.firstName }} {{ contact.lastName }}</span>
 					<span  style="float:right" >
 						<router-link :to="{ name: 'ContactDetails', params: { id: contact._id } }"  type="button" class="btn btn-outline-info mt-1">Details</router-link>
 					</span>
@@ -25,8 +25,7 @@
 </template>
 
 <script>
-import ApiHelper from '@/helpers/ApiHelper'
-import ContactDetails from './ContactDetails'
+import ApiHelper from '@/helpers/api-helper'
 
 export default {
   name: 'Contacts',

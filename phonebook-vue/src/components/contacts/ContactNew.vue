@@ -6,8 +6,8 @@
 		<img :src="photoUrl" class="img" alt="profile photo">
 		<div class="pl-sm-4 pl-2" id="img-section"> <b>Contact Photo</b>
             <p>Accepted file type .png .jpg .jpeg</p>
-			<button class="btn btn-outline-info">Upload</button>
-			<input ref="fileInput" type="file" accept=".png, .jpg, .jpeg" name="name" style="display: none;" />
+			<button @click="clickFileInput" class="btn btn-outline-info">Upload</button>
+			<input ref="fileInput" @change="photoChanged($event)" type="file" accept=".png, .jpg, .jpeg" name="name" style="display: none;" />
 		</div>
     </div>
     <div class="py-2">
@@ -60,7 +60,8 @@
 </template>
 
 <script>
-import ApiHelper from '@/helpers/ApiHelper'
+import ApiHelper from '@/helpers/api-helper'
+import Base64Converter from '@/helpers/base64-converter'
 
 export default {
   name: 'ContactEdit',
@@ -80,6 +81,21 @@ export default {
   },
   
   methods: {
+	clickFileInput() {
+		this.$refs.fileInput.click();
+	},
+	
+	photoChanged(event) {
+		this.photoUrl = URL.createObjectURL(event.target.files[0])
+		
+		Base64Converter.getBase64StringFromFile(event.target.files[0])
+		.then(res => {
+			this.contact.base64Photo = res
+		}).catch(err => {
+			console.log(err)
+		})
+	},
+
     checkForm () {				
 		// Check if all required fields are filled
 		if (this.contact.firstName && this.contact.lastName &&

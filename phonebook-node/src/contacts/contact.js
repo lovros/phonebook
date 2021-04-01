@@ -10,11 +10,12 @@ module.exports = function makeContact (contactInfo = requiredParam('contactInfo'
     lastName = requiredParam('lastName'),
     emailAddress = requiredParam('emailAddress'),
     phoneNumber = requiredParam('phoneNumber'),
-    note = requiredParam('note')
+    note = requiredParam('note'),
+    base64Photo
   }) {
     validateName('first', firstName)
     validateName('last', lastName)
-    return { firstName, lastName, emailAddress, phoneNumber, note }
+    return { firstName, lastName, emailAddress, phoneNumber, note, base64Photo }
   }
 
   function validateName (label, name) {
@@ -25,13 +26,14 @@ module.exports = function makeContact (contactInfo = requiredParam('contactInfo'
     }
   }
 
-  function normalize ({ firstName, lastName, emailAddress, phoneNumber, note }) {
+  function normalize ({ firstName, lastName, emailAddress, phoneNumber, note, base64Photo }) {
     return {
       firstName: firstLetterToUpper(firstName),
       lastName: firstLetterToUpper(lastName),
       emailAddress: emailAddress.toLowerCase(),
       phoneNumber: phoneNumber,
-      note: note
+      note: note,
+      base64Photo: base64Photo
     }
   }
 

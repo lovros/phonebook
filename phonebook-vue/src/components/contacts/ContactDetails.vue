@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import ApiHelper from '@/helpers/ApiHelper'
+import ApiHelper from '@/helpers/api-helper'
 
 export default {
   name: 'ContactDetails',
@@ -59,7 +59,7 @@ export default {
   data () {
     return {
       contact: {},
-	  photoUrl: require('@/assets/default-photo.png'),  
+	    photoUrl: require('@/assets/default-photo.png'),  
     }
   },
   
@@ -71,8 +71,11 @@ export default {
   	getContact() {
       ApiHelper.getContactById({ token: this.$store.state.token, id: this.$route.params.id })
         .then( response => {
-          if(response.data.success)
+          if(response.data.success) {
             this.contact = response.data.contact
+              if(response.data.contact.base64Photo)
+                this.photoUrl = response.data.contact.base64Photo
+          }
           else
             throw response
         })

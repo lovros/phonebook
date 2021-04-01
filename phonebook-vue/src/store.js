@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-import AuthHelper from '@/helpers/AuthHelper'
+import AuthHelper from '@/helpers/auth-helper'
 
 Vue.use(Vuex)
 
