@@ -33,8 +33,8 @@ module.exports = function makeAuthEndpointHandler ({ authRepo }) {
       const user = makeUser(userInfo)
       try {
         let createdUser = await authRepo.register({...user})
-        let token = await authRepo.login({userPassword: password, ...createdUser}) 
-        return httpSuccess({token: token})
+        let result = await authRepo.login({userPassword: password, ...createdUser}) 
+        return httpSuccess({token: result.token})
 
       } catch (e) {
           // check for E11000 mongodb duplicate key error 
@@ -61,8 +61,13 @@ module.exports = function makeAuthEndpointHandler ({ authRepo }) {
       userInfo.hashedPassword = hash
       const user = makeUser(userInfo)
 
-      let token = await authRepo.login({userPassword: password, ...user}) 
-      return httpSuccess({token: token})
+      let result = await authRepo.login({userPassword: password, ...user})
+      if (result.token)
+        return httpSuccess({token: result.token})
+      else if (result.error)
+        return httpError({errorMessage: result.error})
+      else
+        return httpError({errorMessage: 'Did not log in'})
     }
     else {
       return httpError({errorMessage: 'Missing field: password'})

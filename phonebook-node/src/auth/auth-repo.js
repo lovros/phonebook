@@ -25,9 +25,11 @@ module.exports = function makeAuthRepo ({ database }) {
 
     if (foundUser) {
       if (await passwordHandler.passwordMatchesHash({ password: userPassword, hash: foundUser.hashedPassword}))
-        return authHandler.generateAccessToken({data: foundUser, expireTime: "2h"})
+        return {token: authHandler.generateAccessToken({data: foundUser, expireTime: "2h"})}
+      else return {error: "Incorrect password"}
     }
-    return {error: "Incorrect password"}
+    else
+      return {error: "No such username exists"}
   }
 
   function documentToUser ({ _id: userId, ...doc }) {

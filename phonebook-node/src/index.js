@@ -3,10 +3,15 @@ const handleContactsRequest = require('./contacts')
 const handleAuthRequest = require('./auth')
 
 const express = require('express')
+const cors = require('cors')
 
 const PORT = process.env.PORT || 4000
 
 const app = express()
+let corsOptions = {
+  origin: 'http://localhost:8080'
+}
+app.use(cors(corsOptions))
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 

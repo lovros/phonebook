@@ -53,6 +53,7 @@ module.exports = function makeContactRepo ({ database }) {
   async function update ({ currentUser, contactId, ...contact }) {
     const db = await database
     if (contactId) {
+      delete contact.userId
       const result = await db.collection('contacts').findOneAndReplace(
         { userId: db.makeId(currentUser._id), _id: db.makeId(contactId) },
         { userId: db.makeId(currentUser._id), ...contact }
@@ -61,8 +62,6 @@ module.exports = function makeContactRepo ({ database }) {
         return {updated: result.lastErrorObject.updatedExisting}
       else
         return {error: "Did not update"}
-
-      
     }
     return {error: "Missing parameter: contactId"}
   }

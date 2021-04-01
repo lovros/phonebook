@@ -29,10 +29,16 @@ module.exports = function makeContactsEndpointHandler ({ contactRepo }) {
 
   async function getContacts ({httpRequest: httpRequest, currentUser: currentUser}) {
     const { id } = httpRequest.pathParams || {}
-    const result = id
-      ? await contactRepo.findById({ currentUser: currentUser, contactId: id })
-      : await contactRepo.getItems({ currentUser: currentUser })
-      return httpSuccess({result})
+    if (id) {
+      const result = await contactRepo.findById({ currentUser: currentUser, contactId: id })
+      return httpSuccess({contact: result})
+
+    } else {
+      const result = await contactRepo.getItems({ currentUser: currentUser })
+      return httpSuccess({contacts: result})
+
+    }
+
   }
 
   async function postContacts ({httpRequest: httpRequest, currentUser: currentUser}) {
@@ -41,7 +47,7 @@ module.exports = function makeContactsEndpointHandler ({ contactRepo }) {
       return httpError({errorMessage: 'No POST body'})
     const contact = makeContact(contactInfo)
     const result = await contactRepo.add({currentUser: currentUser, ...contact})
-    return httpSuccess({result})
+    return httpSuccess({contact: result})
   }
 
   async function deleteContacts ({httpRequest: httpRequest, currentUser: currentUser}) {
@@ -64,7 +70,7 @@ module.exports = function makeContactsEndpointHandler ({ contactRepo }) {
     if(result.error)
       return httpError({errorMessage: result.error})
     else
-      return httpSuccess({result})
+      return httpSuccess({...result})
   }
 
 }
